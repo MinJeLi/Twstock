@@ -47,3 +47,30 @@ class stock(object):
                 print(f"Error fetching data for month {formatted_month}: {e}")
             
         return history_of_price
+    
+    def volumeHistory(self):
+
+        if not self.data:
+            return {}
+
+        date_of_index = self.data['fields'].index('Date')
+        volume_of_index = self.data['fields'].index('Trade Volume')
+        history_of_volume = dict()
+        
+        for month in range(1,13):
+            formatted_month = "{:02}".format(month)
+            date_url = "2023"+ str(formatted_month) + "30"
+            total_url = self.base_url + "date=" + date_url +"&stockNo=" + self.stock_number +"&response=json"
+            data = json.loads(urlopen(total_url).read())
+            try:
+            
+                if data['total'] == 0:
+                    break
+            
+                for volume in data['data']:
+                    history_of_volume[volume[date_of_index]]= volume[volume_of_index]
+                    
+            except Exception as e:
+                print(f"Error fetching data for month {formatted_month}: {e}")
+            
+        return history_of_volume
